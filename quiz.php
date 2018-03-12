@@ -7,7 +7,6 @@
 	if($_POST){
 		session_start();
 		
-
 		if(isset($_POST['logout'])){
 			$_SESSION = array();
 			if(isset($_COOKIE[session_name()])){
@@ -20,7 +19,7 @@
 		if(isset($_POST['startBtn'])){
 			$_SESSION['questionIndexArr'] = array_rand( $questions, $maxNumberOfQuestions );
 			shuffle($_SESSION['questionIndexArr']);
-			var_dump($_SESSION);
+			//var_dump($_SESSION);
 			foreach ($_SESSION['questionIndexArr'] as $key => $value) {
 				$tempQuestionArr[] = $questions[$value];
 			}
@@ -32,11 +31,11 @@
 				$tempQuestionArr[] = $questions[$value];
 
 			}
-			var_dump($tempQuestionArr);
+			//var_dump($tempQuestionArr);
 			if(isset($_POST['question'])){
 				$_SESSION['userAnswerArr'][$currentQuestionNumber-1] = array("questionIndex"=>"{$_SESSION['questionIndexArr'][$currentQuestionNumber-1]}", "indexOfAnswer"=>"{$_POST['question']}");
 				if($_POST['question'] == ($tempQuestionArr[$currentQuestionNumber-1]['indexOfCorrectAnswer'])){
-					var_dump($_SESSION);
+					//var_dump($_SESSION);
 					$_SESSION['result'] = !isset($_SESSION['result']) ? 1 : $_SESSION['result']+1;
 					$quizResult = $_SESSION['result'] * 1;
 					//setcookie('result',$quizResult);
@@ -45,6 +44,11 @@
 				}
 			}
 		}
+	}
+	if($_GET){
+		//header('Content-Type: application/json');
+		//exit('s');
+		echo "string";
 	}
 	function calculateScore($questionsArr, $userInfoArr){
 		$score = 0;
@@ -89,6 +93,7 @@
 			<input type="hidden" id="questionNumber" name="questionNumber" value=<?php echo $_POST['questionNumber']; ?>>
 			<input type='submit' name='nextQuestionBtn' id='nextQuestionBtn' value='Next Question'/>
 		</form>
+		<button type="button" id="checkAnswerBtn">Check answer</button>
 	<?php } else { ?>
 		<h3>Quiz is over</h3>
 		<h4>You scored <?php echo calculateScore($tempQuestionArr, $_SESSION['userAnswerArr']) ?> points</h4>
@@ -101,9 +106,11 @@
 		var startBtn = document.getElementById('startBtn');
 		var nextQuestionBtn = document.getElementById('nextQuestionBtn');
 		var questionNumber = document.getElementById('questionNumber');
+		var checkAnswerBtn = document.getElementById('checkAnswerBtn');
 		
 		if(startBtn){startBtn.addEventListener('click', changeQuestionNumber(1), false);}
 		if(nextQuestionBtn){nextQuestionBtn.addEventListener('click', changeQuestionNumber(1), false);}
+		if(checkAnswerBtn){checkAnswerBtn.addEventListener('click', testFunction, false);}
 
 
 		function changeQuestionNumber(val){
@@ -114,6 +121,22 @@
 				//alert(questionNumber);
 			};
 		}
+		function testFunction(){
+			var xhttp = new XMLHttpRequest();
+			
+			  xhttp.onreadystatechange = function() {
+			    if (this.readyState == 4 && this.status == 200) {
+			    console.log(JSON.parse(this.responseText));
+			    //console.log((this.responseText));
+			     //document.getElementById("demo").innerHTML = this.responseText;
+			    }
+			  };
+			  xhttp.open("POST", "http://localhost/quiz/testPage.php", true);
+			  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			  xhttp.send('currentQuestion=0');
+		}
+
+
 	</script>
 </body>
 </html>
