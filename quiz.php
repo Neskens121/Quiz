@@ -84,7 +84,7 @@
 		<p>
 			<?php echo  $tempQuestionArr[$currentQuestionNumber]['question']?>		
 		</p>
-		<form action="" method="POST">
+		<form id="questionForm" action="" method="POST">
 			<ul>
 				<?php foreach ($tempQuestionArr[$currentQuestionNumber]['potentialAnswers'] as $key => $value) {
 					echo "<li><input type='radio' name='question' value=$key>" . $value . "</li>";
@@ -123,17 +123,21 @@
 		}
 		function testFunction(){
 			var xhttp = new XMLHttpRequest();
+			//console.log(document.querySelector('input[name="question"]:checked').value);
+
+			//should check for NULL value in case that no radio button is selected
+			var answerIndex = document.querySelector('input[name="question"]:checked').value;
 			
 			  xhttp.onreadystatechange = function() {
 			    if (this.readyState == 4 && this.status == 200) {
-			    console.log(JSON.parse(this.responseText));
-			    //console.log((this.responseText));
+			    //console.log(JSON.parse(this.responseText));
+			    console.log((this.responseText));
 			     //document.getElementById("demo").innerHTML = this.responseText;
 			    }
 			  };
 			  xhttp.open("POST", "http://localhost/quiz/testPage.php", true);
 			  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-			  xhttp.send('currentQuestion=0');
+			  xhttp.send("currentQuestion=" + questionNumber.value + "&answerIndex=" + answerIndex);
 		}
 
 
