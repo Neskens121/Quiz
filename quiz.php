@@ -70,39 +70,46 @@ function calculateScore($questionsArr, $userInfoArr){
 <html>
 <head>
 	<title>Quiz</title>
-	<style type="text/css">
-	ul {
-		list-style-type: none;
-		padding: 0;
-		margin: 0;
-	}
-</style>
+	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
 	<?php if(!$_POST){ ?>
-	<h1>Welcome to our Quiz</h1>
-	<form action="" method="POST">
-		<input type="hidden" id="questionNumber" name="questionNumber" value="0">
-		<input type="submit" name="startBtn" id="startBtn" value="startBtn">
-	</form>
+	<div id="wrapper">
+		<h2>Welcome to our Quiz</h2>
+		<form action="" method="POST">
+			<input type="hidden" id="questionNumber" name="questionNumber" value="0">
+			<input type="submit" name="startBtn" id="startBtn" value="Start!">
+		</form>
+	</div>
 	<?php } elseif (isset($_POST['startBtn']) || $currentQuestionNumber < $maxNumberOfQuestions) { ?> 
-	<h3>Question Number: <?php echo ($currentQuestionNumber + 1)?></h3>
-	<p>
-		<?php echo  $tempQuestionArr[$currentQuestionNumber]['question']?>		
-	</p>
-	<form id="questionForm" action="" method="POST">
-		<ul>
-			<?php foreach ($tempQuestionArr[$currentQuestionNumber]['potentialAnswers'] as $key => $value) {
-				echo "<li><input type='radio' name='question' value=$key required>" . $value . "</li>";
-			} ?>		
-		</ul>
-		<input type="hidden" id="questionNumber" name="questionNumber" value=<?php echo $_POST['questionNumber']; ?>>
-		<input type='submit' name='nextQuestionBtn' id='nextQuestionBtn' value='Next Question'/>
-	</form>
-	<button type="button" id="checkAnswerBtn">Check answer</button>
+	<div id="wrapper">
+		<h2>Question Number: <?php echo ($currentQuestionNumber + 1)?></h2>
+		<p>
+			<?php echo  $tempQuestionArr[$currentQuestionNumber]['question']?>		
+		</p>
+		<form id="questionForm" action="" method="POST">
+			<ul>
+				<?php foreach ($tempQuestionArr[$currentQuestionNumber]['potentialAnswers'] as $key => $value) { ?>
+					<li>
+						<input type='radio' name='question' value=<?php echo $key; ?> id=<?php echo $key; ?> required>
+						<label for=<?php echo $key; ?>><?php echo $value; ?></label>
+					</li>
+				<?php } ?>		
+			</ul>
+			<input type="hidden" id="questionNumber" name="questionNumber" value=<?php echo $_POST['questionNumber']; ?>>
+			<input type='submit' name='nextQuestionBtn' id='nextQuestionBtn' value='Next Question'/>
+		</form>
+		<div id="result">
+			<p id="incorrectAnswer">Incorrect</p>
+			<p id="correctAnswer">Correct</p>
+			<p></p>
+			<p id="answerText"></p>
+		</div>
+		<button type="button" id="checkAnswerBtn">Check answer</button>
+	</div>
 	<?php } else { ?>
-	<h3>Quiz is over</h3>
-	<h4>You scored <?php echo calculateScore($tempQuestionArr, $_SESSION['userAnswerArr']) ?> points</h4>
+	<h2>Quiz is over</h2>
+	<p>You scored <?php echo calculateScore($tempQuestionArr, $_SESSION['userAnswerArr']) ?> points</p>
 	<form action="" method="POST">
 		<input name="logout" type="submit" id="logout" value="Start Quiz Again">
 	</form>
@@ -142,10 +149,22 @@ function calculateScore($questionsArr, $userInfoArr){
 				
 				xhttp.onreadystatechange = function() {
 					if (this.readyState == 4 && this.status == 200) {
-				    //console.log(JSON.parse(this.responseText));
-				    console.log((this.responseText));
-				     //document.getElementById("demo").innerHTML = this.responseText;
-				 }
+						console.log(JSON.parse(this.responseText));
+						var result = JSON.parse(this.responseText);
+						if(result.answerCorrectness){
+							document.getElementById('correctAnswer').style.display = 'block';
+						} else {
+							document.getElementById('incorrectAnswer').style.display = 'block';
+						}
+
+						var answerText = document.getElementById('answerText');
+						answerText.innerHTML = result['descriptionOfCorrectAnswer'];
+						var radioBtnArr = document.querySelectorAll('input[name="question"]');
+						console.log(radioBtnArr);
+						radioBtnArr.forEach(function(element){
+							element.disabled = true;
+						});
+					}
 				};
 				xhttp.open("POST", "http://localhost/quiz/testPage.php", true);
 				xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

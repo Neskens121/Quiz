@@ -12,11 +12,11 @@ if($_POST){
 		$tempQuestionArr[] = $questions[$value];
 	}
 
-	echo $tempQuestionArr[$currentQuestion]['indexOfCorrectAnswer'] == $answerIndex ? 'true' : 'false';
 	//echo $currentQuestion + '<br>';
 	//echo $_POST['answerIndex'];
-
-	//echo json_encode($tempQuestionArr[$currentQuestion]);
+	//echo $tempQuestionArr[$currentQuestion]['indexOfCorrectAnswer'] == $answerIndex ? 'true' : 'false';
+	$tempQuestionArr[$currentQuestion]['answerCorrectness'] = $tempQuestionArr[$currentQuestion]['indexOfCorrectAnswer'] == $answerIndex;
+	echo json_encode($tempQuestionArr[$currentQuestion]);
 }
 
 
