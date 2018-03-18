@@ -1,5 +1,5 @@
 <?php 
-var_dump($_POST);
+//var_dump($_POST);
 
 
 
@@ -9,7 +9,7 @@ $currentQuestionNumber = $_POST ? $_POST['questionNumber'] : NULL;
 /*IF we got data through HTML form*/
 if($_POST){
 	session_start();
-	var_dump($_SESSION);
+	//var_dump($_SESSION);
 	/*Check if the last page is reached and logout Btn pressed */
 	if(isset($_POST['logout'])){
 		$_SESSION = array();
@@ -47,7 +47,7 @@ if($_POST){
 					$quizResult = $_SESSION['result'] * 1;
 					//setcookie('result',$quizResult);
 					//echo $quizResult . '<br>';
-					echo calculateScore($tempQuestionArr, $_SESSION['userAnswerArr']) . '<br>';
+					//echo calculateScore($tempQuestionArr, $_SESSION['userAnswerArr']) . '<br>';
 				}
 			} else {
 				//header('Location: http://localhost/quiz/quiz.php');
@@ -97,22 +97,24 @@ function calculateScore($questionsArr, $userInfoArr){
 				<?php } ?>		
 			</ul>
 			<input type="hidden" id="questionNumber" name="questionNumber" value=<?php echo $_POST['questionNumber']; ?>>
+			<button type="button" id="checkAnswerBtn">Check Answer</button>
 			<input type='submit' name='nextQuestionBtn' id='nextQuestionBtn' value='Next Question'/>
 		</form>
 		<div id="result">
-			<p id="incorrectAnswer">Incorrect</p>
-			<p id="correctAnswer">Correct</p>
+			<p id="incorrectAnswer" class="incorrect">Incorrect</p>
+			<p id="correctAnswer" class="correct">Correct</p>
 			<p></p>
 			<p id="answerText"></p>
 		</div>
-		<button type="button" id="checkAnswerBtn">Check answer</button>
 	</div>
 	<?php } else { ?>
-	<h2>Quiz is over</h2>
-	<p>You scored <?php echo calculateScore($tempQuestionArr, $_SESSION['userAnswerArr']) ?> points</p>
-	<form action="" method="POST">
-		<input name="logout" type="submit" id="logout" value="Start Quiz Again">
-	</form>
+	<div id="wrapper">
+		<h2>Quiz is over</h2>
+		<p>You scored <?php echo calculateScore($tempQuestionArr, $_SESSION['userAnswerArr']) ?> points</p>
+		<form action="" method="POST">
+			<input name="logout" type="submit" id="logout" value="Start Quiz Again">
+		</form>
+	</div>
 	<?php } ?> 
 
 	<script type="text/javascript">
@@ -157,13 +159,19 @@ function calculateScore($questionsArr, $userInfoArr){
 							document.getElementById('incorrectAnswer').style.display = 'block';
 						}
 
+
 						var answerText = document.getElementById('answerText');
 						answerText.innerHTML = result['descriptionOfCorrectAnswer'];
 						var radioBtnArr = document.querySelectorAll('input[name="question"]');
 						console.log(radioBtnArr);
-						radioBtnArr.forEach(function(element){
-							element.disabled = true;
-						});
+
+						document.getElementById('checkAnswerBtn').style.display = 'none';
+						document.getElementById('nextQuestionBtn').style.display = 'block';
+						for(var i = 0; i < radioBtnArr.length; i++){
+							if(i == result['indexOfCorrectAnswer']){radioBtnArr[i].parentElement.lastElementChild.style.color = "yellowgreen";}
+							//radioBtnArr[i].parentElement.lastElementChild.disabled = true;
+							//radioBtnArr[i].disabled = true;
+						}
 					}
 				};
 				xhttp.open("POST", "http://localhost/quiz/testPage.php", true);

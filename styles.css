@@ -29,6 +29,11 @@ p {
     color: #444;
 }
 
+#result p {
+    font-size: 16px;
+    text-align: justify;
+}
+
 input + label {
 	font: 400 13.3333px Arial;
 }
@@ -45,6 +50,7 @@ input[type="radio" i] {
 input[type="submit"], button {
     width: auto;
     padding: 5px 15px;
+    margin-top: 10px;
     color: #ffffff;
     background-color: darkcyan;
     border: 1px solid #fff;
@@ -58,7 +64,7 @@ input[type="submit"]:hover , button:hover {
     cursor: pointer;
 }
 
-#correctAnswer, #incorrectAnswer {
+#nextQuestionBtn, #correctAnswer, #incorrectAnswer  {
 	display: none;
 }
 
